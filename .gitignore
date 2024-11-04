@@ -18,7 +18,7 @@ target/
 *.iws
 *.iml
 *.ipr
-
+*.jar
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+/application-test.yml
+/Dockerfile
+/mvnw
+/mvnw.cmd
+/.mvn/wrapper

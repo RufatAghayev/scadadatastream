@@ -19,6 +19,5 @@ public class JWTAuthResponse {
         this.refreshToken = refreshToken;
     }
 
-    public JWTAuthResponse() {
-    }
+
 }

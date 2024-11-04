@@ -112,7 +112,7 @@ public class FileController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileEntity.getFileName() + "\"")
-                // Burada da əlavə məlumatları başlığa əlavə edirik
+
                 .header("File-Name", fileEntity.getFileName())
                 .header("File-Download-Uri", "/download/" + id)
                 .contentType(contentType)

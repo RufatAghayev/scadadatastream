@@ -10,10 +10,11 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-@Mapper(componentModel = "spring",builder = @Builder(disableBuilder = true),imports = {Object.class, LocalTime.class})
+@Mapper(componentModel = "spring",builder = @Builder(disableBuilder = true),imports = {Object.class, LocalDateTime.class})
 public abstract class DataTransferMapper {
 
     public abstract DataTransferResponseDto map(DataTransfer dataTransfer);

@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
@@ -16,7 +17,7 @@ public class DataTransfer {
     long id;
     String data_Id_1;
     String data_Id_2;
-    @Column(name = "createdTimee",columnDefinition = "TIME")
-    LocalTime createdTime=LocalTime.now();
-    LocalTime updateTime;
+    @Column(name = "createdTimee",columnDefinition = "TIMESTAMP")
+    LocalDateTime createdTime= LocalDateTime.now();
+    LocalDateTime updateTime;
 }

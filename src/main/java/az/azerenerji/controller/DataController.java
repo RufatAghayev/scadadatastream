@@ -7,11 +7,13 @@ import az.azerenerji.service.impl.DataServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -29,7 +31,27 @@ public class DataController {
         return ResponseEntity.ok(dataService.findAll());
 
     }
+    @GetMapping("/by-date")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<DataTransferResponseDto>> findByDateRange(
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
 
+        List<DataTransferResponseDto> data;
+
+
+        if (startDate == null || endDate == null) {
+            data = dataService.findAll();
+        } else {
+            data = dataService.findByDateRange(startDate, endDate);
+        }
+
+        if (data == null || data.isEmpty()) {
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.ok(data);
+    }
     @PostMapping(path = "/save")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_ADMIN') ")

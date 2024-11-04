@@ -10,8 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Service
@@ -20,6 +23,17 @@ public class DataServiceImpl implements DataService {
 
     private final DataTransferRepository dataTransferRepository;
     private final DataTransferMapper dataTransferMapper;
+
+    @Override
+    public List<DataTransferResponseDto> findByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        List<DataTransfer> data = dataTransferRepository.findByDateRange(startDate, endDate);
+        if (data == null || data.isEmpty()) {
+            return null;
+        }
+
+        List<DataTransferResponseDto> map = dataTransferMapper.map(data);
+        return map;
+    }
 
     @Override
     public void deleteById(long id) {
@@ -33,7 +47,7 @@ public class DataServiceImpl implements DataService {
                 .orElseThrow(() -> new RuntimeException("Data not found"));
 
 
-        LocalTime updateTime = LocalTime.parse(dataRequestDto.getCreatedTime(), DateTimeFormatter.ofPattern("HH:mm"));
+        LocalDateTime updateTime = LocalDateTime.parse(dataRequestDto.getCreatedTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
         dataTransfer1.setUpdateTime(updateTime);
         dataTransferMapper.dataTransferUpdate(dataRequestDto, dataTransfer1);
         DataTransfer update = dataTransferRepository.save(dataTransfer1);
@@ -51,11 +65,20 @@ public class DataServiceImpl implements DataService {
     public DataTransferResponseDto dataSave(DataRequestDto dataRequestDto) {
         DataTransfer dataTransfer = dataTransferMapper.map(dataRequestDto);
 
-        // `createdTime` təyin edin
-        LocalTime createdTime = LocalTime.parse(dataRequestDto.getCreatedTime(), DateTimeFormatter.ofPattern("HH:mm"));
-        dataTransfer.setCreatedTime(createdTime);
 
-        // Boş və ya null olub olmadığını yoxlayın
+        LocalDateTime createdDateTime;
+        try {
+
+            createdDateTime = LocalDateTime.parse(dataRequestDto.getCreatedTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
+        } catch (DateTimeParseException e) {
+
+            throw new IllegalArgumentException("CreatedTime format is invalid. Please use yyyy-MM-dd'T'HH:mm:ss format.");
+        }
+
+
+        dataTransfer.setCreatedTime(createdDateTime);
+
+
         if (dataRequestDto.getData_Id_1() == null || dataRequestDto.getData_Id_1().isEmpty()) {
             throw new IllegalArgumentException("Data_Id_1 cannot be null or empty");
         }
@@ -64,12 +87,11 @@ public class DataServiceImpl implements DataService {
             throw new IllegalArgumentException("Data_Id_2 cannot be null or empty");
         }
 
-        // Yeni DataTransfer obyektini yaddaşa yazın
+
         DataTransfer savedDataTransfer = dataTransferRepository.save(dataTransfer);
 
-        // Saxlanılmış məlumatları cavab olaraq qaytarın
-        return dataTransferMapper.map(savedDataTransfer);
 
+        return dataTransferMapper.map(savedDataTransfer);
 
     }
 }

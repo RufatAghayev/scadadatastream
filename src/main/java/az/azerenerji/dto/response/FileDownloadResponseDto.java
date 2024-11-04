@@ -6,8 +6,8 @@ import lombok.Data;
 public class FileDownloadResponseDto {
     private Long id;
     private String fileName;
-    private String fileDownloadUri;  // Faylı əldə etmək üçün URL
-    private byte[] fileData;         // Faylın kontenti (müştəriyə lazım olarsa)
+    private String fileDownloadUri;
+    private byte[] fileData;
 
 
     public FileDownloadResponseDto(Long id, String fileName, String fileDownloadUri, byte[] fileData) {

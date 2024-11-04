@@ -22,7 +22,7 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
     private final JwtUtil jwtUtil;
-    private  final TokenService tokenService;
+    private final TokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
@@ -40,10 +40,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.refreshToken(request));
     }
 
-//    @GetMapping("/generate-token")
-//    public String generateToken() {
-//        Map<String, Object> claims = new HashMap<>();
-//        return tokenService.generateTokens(claims);
 
-    }
+}
 

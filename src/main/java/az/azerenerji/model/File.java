@@ -24,6 +24,4 @@ public class File {
     private byte[] data;
 
 
-
-
 }

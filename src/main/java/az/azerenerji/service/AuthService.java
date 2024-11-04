@@ -50,26 +50,26 @@ public class AuthService {
         String accessToken = tokenService.generateJwtToken(authentication);
         return new JWTAuthResponse(user.getId(), accessToken, uuid);
     }
+
     public RefreshTokenResponseDto refreshToken(HttpServletRequest request) {
         RefreshTokenResponseDto refreshResponseDto = new RefreshTokenResponseDto();
         String jwt = tokenService.getJWTFromRequest(request);
 
         try {
-            tokenService.validateAndExtractClaims(jwt); // Tokeni yoxla
+            tokenService.validateAndExtractClaims(jwt);
 
         } catch (ExpiredJwtException ex) {
-            // Əgər token vaxtı bitibsə, claims-ləri bərpa et
             Claims claims = ex.getClaims();
             String username = claims.get(TokenClaims.SUBJECT.getValue(), String.class);
-            List<String> authorities = claims.get("authorities", List.class); // İcazələri JWT-dən çıxar
+            List<String> authorities = claims.get("authorities", List.class);
 
-            // İstifadəçini bazadan tap
+
             User user = userRepository.findByUserName(username)
                     .orElseThrow(() -> new UsernameNotFoundException("can not find"));
 
-            // Əgər token müddəti bitibsə, yenisini generasiya et
+
             if (claims.getExpiration().compareTo(Date.from(Instant.now())) < 0) {
-                // İstifadəçi və icazələrlə yeni token yarat
+
                 String token = tokenService.generateTokens(claims);
                 refreshResponseDto.setRefreshToken(token);
                 return refreshResponseDto;
@@ -83,6 +83,7 @@ public class AuthService {
         return refreshResponseDto;
 
     }
+
     @Transactional(rollbackFor = Exception.class)
     public void signUp(RegisterRequestDto registerDto) {
         if (userRepository.existsByUserName(registerDto.getUsername())) {
